@@ -1,0 +1,65 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Team {
+  admin     String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String?
+  ranks     Rank[]
+  sport     Sport?   @relation(fields: [sportId], references: [id])
+  sportId   String?
+  updatedAt DateTime @updatedAt
+  users     User[]
+}
+
+model Sport {
+  createdAt     DateTime @default(now())
+  id            String   @id @default(cuid())
+  isMultiplayer Boolean?
+  name          String?
+  teams         Team[]
+  updatedAt     DateTime @updatedAt
+}
+
+model Challenge {
+  challengingTeam String?
+  createdAt       DateTime @default(now())
+  id              String   @id @default(cuid())
+  opponentTeam    String?
+  status          String?
+  updatedAt       DateTime @updatedAt
+  winner          String?
+}
+
+model Rank {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  score     Float?
+  team      Team?    @relation(fields: [teamId], references: [id])
+  teamId    String?
+  updatedAt DateTime @updatedAt
+  winStreak Int?
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  isPlayer  Boolean?
+  lastName  String?
+  password  String
+  roles     Json
+  team      Team?    @relation(fields: [teamId], references: [id])
+  teamId    String?
+  typeField String?
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
